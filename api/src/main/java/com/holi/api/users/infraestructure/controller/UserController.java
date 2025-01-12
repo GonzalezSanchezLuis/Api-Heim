@@ -3,32 +3,54 @@ package com.holi.api.users.infraestructure.controller;
 import com.holi.api.users.application.dto.UserRequest;
 import com.holi.api.users.application.dto.UserResponse;
 import com.holi.api.users.application.service.UserService;
+import com.holi.api.users.infraestructure.exceptions.EmailAlreadyRegisteredException;
+import com.holi.api.users.infraestructure.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
+
+
 
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/v1/users")
 public class UserController {
     private final UserService userService;
+    private JwtUtils jwtUtils;
+
 
     @Autowired
-    public  UserController(UserService userService){
+    public  UserController(UserService userService, JwtUtils jwtUtils){
         this.userService = userService;
+        this.jwtUtils = jwtUtils;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> registerUser(@RequestBody UserRequest userRequest){
-     try{
-         UserResponse registerUser = userService.registerUser(userRequest);
-         return  new ResponseEntity<>(registerUser, HttpStatus.OK);
-     } catch (Exception e) {
-         return  new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
-     }
+    public ResponseEntity<?> registerUser(@RequestBody UserRequest userRequest) {
+        System.out.println("Solicitud recibida: " + userRequest);
+        try {
+            UserResponse registerUser = userService.registerUser(userRequest);
+
+           /* String token = jwtUtils.generateToken(registerUser.getEmail());
+            UserRegistrationResponse response = new UserRegistrationResponse(registerUser, token); */
+
+            return ResponseEntity.ok(registerUser);
+        } catch (EmailAlreadyRegisteredException e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        } catch (Exception e){
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Ocurrió un error inesperado. Nuestros desarrolladores ya fueron informados.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
+
+
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long userId) {

@@ -5,11 +5,14 @@ import com.holi.api.drivers.application.dto.DriverResponse;
 import com.holi.api.drivers.application.service.DriverService;
 import com.holi.api.users.application.dto.UserRequest;
 import com.holi.api.users.application.dto.UserResponse;
+import com.holi.api.users.infraestructure.exceptions.EmailAlreadyRegisteredException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -24,12 +27,18 @@ public class DriverController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<DriverResponse> registerDriver(@RequestBody DriverRequest driverRequest){
+    public ResponseEntity<?> registerDriver(@RequestBody DriverRequest driverRequest){
         try{
             DriverResponse registerDriver = driverService.registerDriver(driverRequest);
-            return  new ResponseEntity<>(registerDriver, HttpStatus.OK);
-        } catch (Exception e) {
-            return  new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
+            return  ResponseEntity.ok(registerDriver);
+        } catch (EmailAlreadyRegisteredException e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        } catch (Exception e){
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Ocurrió un error inesperado. Nuestros desarrolladores ya fueron informados.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 

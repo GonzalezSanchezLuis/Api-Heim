@@ -10,5 +10,6 @@ public class DriverRequest {
     private int  phone;
     private int  licenseNumber;
     private String  vehicleType;
+    private String  enrollVehicle;
     private String role;
 }

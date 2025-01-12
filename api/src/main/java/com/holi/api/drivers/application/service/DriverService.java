@@ -8,6 +8,7 @@ import com.holi.api.drivers.infraestructure.repository.DriverRepository;
 import com.holi.api.users.application.dto.UserRequest;
 import com.holi.api.users.application.dto.UserResponse;
 import com.holi.api.users.domain.entity.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
@@ -17,10 +18,12 @@ import java.util.Optional;
 public class DriverService {
     private final DriverRepository driverRepository;
     private final DriverMapper driverMapper;
+    private final BCryptPasswordEncoder bcryptPasswordEncoder;
 
-    public DriverService(DriverRepository driverRepository, DriverMapper driverMapper){
+    public DriverService(DriverRepository driverRepository, DriverMapper driverMapper, BCryptPasswordEncoder bCryptPasswordEncoder){
         this.driverMapper = driverMapper;
         this.driverRepository = driverRepository;
+        this.bcryptPasswordEncoder = bCryptPasswordEncoder;
 
     }
 
@@ -29,8 +32,11 @@ public class DriverService {
         if (existingDriver.isPresent()) {
             throw new Exception("Ya existe un usuario registrado con ese email.");
         } else {
+            String encodePassword = bcryptPasswordEncoder.encode(driverRequest.getPassword());
+            driverRequest.setPassword(encodePassword);
             Driver newDriver = driverMapper.toEntity(driverRequest);
             newDriver.setActive(false);
+            newDriver.setRole("DRIVER");
 
             System.out.println("Mapped driver: " + newDriver);
             return driverMapper.toResponse(driverRepository.save(newDriver));
