@@ -22,6 +22,8 @@ ext {
 }
 
 dependencies {
+
+
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -36,6 +38,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.modulith:spring-modulith-starter-core'
 	implementation 'org.springframework.modulith:spring-modulith-starter-jpa'
+
+	//Redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	// JWT dependencies
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'

@@ -5,9 +5,6 @@ import com.holi.api.drivers.application.dto.DriverResponse;
 import com.holi.api.drivers.application.mapper.DriverMapper;
 import com.holi.api.drivers.domain.entity.Driver;
 import com.holi.api.drivers.infraestructure.repository.DriverRepository;
-import com.holi.api.users.application.dto.UserRequest;
-import com.holi.api.users.application.dto.UserResponse;
-import com.holi.api.users.domain.entity.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -52,13 +49,19 @@ public class DriverService {
     public DriverResponse updatedDriverData(Long driverId, DriverRequest driverRequest) {
         // Buscar el usuario por ID
         Driver driver = driverRepository.findById(driverId).orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
+        if(driverRequest.getPassword() != null && !driverRequest.getPassword().isEmpty()){
+            driver.setPassword(bcryptPasswordEncoder.encode(driverRequest.getPassword()));
+        }
         driver.setFullName(driverRequest.getFullName());
         driver.setEmail(driverRequest.getEmail());
         driver.setPhone(driverRequest.getPhone());
-        driver.setPassword(driverRequest.getPassword());
         driver.setVehicleType(driverRequest.getVehicleType());
-        driverRepository.save(driver);
+        driver.setEnrollVehicle(driverRequest.getEnrollVehicle());
+        driver.setDocument(driverRequest.getDocument());
+        driver.setUrlAvatarProfile(driverRequest.getUrlAvatarProfile());
 
+
+        driverRepository.save(driver);
         return driverMapper.toResponse(driver);
     }
 
@@ -67,5 +70,11 @@ public class DriverService {
         Driver driverToDelete = driverRepository.findById(driverId).orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
         driverRepository.delete(driverToDelete);
 
+    }
+
+    public Driver updateDriverStatus(Long driverId, DriverRequest statusRequest ){
+        Driver driver = driverRepository.findById(driverId).orElseThrow(()->  new RuntimeException("Driver not found"));
+        driver.setStatus(statusRequest.getStatus());
+        return driverRepository.save(driver);
     }
 }

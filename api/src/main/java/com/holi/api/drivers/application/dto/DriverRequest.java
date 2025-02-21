@@ -6,10 +6,13 @@ public class DriverRequest {
     private String fullName;
     private String email;
     private String password;
-    private int  document;
-    private int  phone;
-    private int  licenseNumber;
+    private String  document;
+    private String  phone;
+    private String urlAvatarProfile;
+    private String  licenseNumber;
     private String  vehicleType;
     private String  enrollVehicle;
+    private  String status;
+    private boolean active;
     private String role;
 }

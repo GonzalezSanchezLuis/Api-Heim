@@ -3,8 +3,6 @@ package com.holi.api.drivers.infraestructure.controller;
 import com.holi.api.drivers.application.dto.DriverRequest;
 import com.holi.api.drivers.application.dto.DriverResponse;
 import com.holi.api.drivers.application.service.DriverService;
-import com.holi.api.users.application.dto.UserRequest;
-import com.holi.api.users.application.dto.UserResponse;
 import com.holi.api.users.infraestructure.exceptions.EmailAlreadyRegisteredException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +14,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/api/v1/drivers")
+@RequestMapping("/api/v1/drivers/")
 @CrossOrigin("*")
 public class DriverController {
     private final DriverService driverService;
@@ -26,7 +24,7 @@ public class DriverController {
         this.driverService = driverService;
     }
 
-    @PostMapping("/register")
+    @PostMapping("register")
     public ResponseEntity<?> registerDriver(@RequestBody DriverRequest driverRequest){
         try{
             DriverResponse registerDriver = driverService.registerDriver(driverRequest);
@@ -42,7 +40,7 @@ public class DriverController {
         }
     }
 
-    @GetMapping("/driver/{driverId}")
+    @GetMapping("driver/{driverId}")
     public ResponseEntity<DriverResponse> getDriverById(@PathVariable Long driverId) {
         try {
             // Obtener el usuario usando el servicio
@@ -57,7 +55,7 @@ public class DriverController {
         }
     }
 
-    @PutMapping("/update/{driverId}")
+    @PutMapping("update/{driverId}")
     public ResponseEntity<DriverResponse> updatedDriverData(@PathVariable Long driverId, @RequestBody DriverRequest driverRequest) {
         try {
             if (driverRequest == null) {
@@ -79,7 +77,7 @@ public class DriverController {
         }
     }
 
-    @DeleteMapping("/delete/{driverId}")
+    @DeleteMapping("delete/{driverId}")
     public ResponseEntity<String> driverDelete(@PathVariable Long driverId) {
         try {
             driverService.driverDelete(driverId);
@@ -90,4 +88,21 @@ public class DriverController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Se produjo un error al procesar la solicitud");
         }
     }
+
+    @PutMapping("status/{driverId}")
+    public ResponseEntity<Map<String, String>> updateDriverStatus(@PathVariable Long driverId, @RequestBody DriverRequest statusRequest) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            driverService.updateDriverStatus(driverId, statusRequest);
+            response.put("status", "success");
+            response.put("message", "Conectado exitosamente");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "Se produjo un error al procesar la solicitud");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+
 }

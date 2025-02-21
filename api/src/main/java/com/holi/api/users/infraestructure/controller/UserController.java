@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/users/")
 public class UserController {
     private final UserService userService;
     private JwtUtils jwtUtils;
@@ -29,7 +29,7 @@ public class UserController {
         this.jwtUtils = jwtUtils;
     }
 
-    @PostMapping("/register")
+    @PostMapping("register")
     public ResponseEntity<?> registerUser(@RequestBody UserRequest userRequest) {
         System.out.println("Solicitud recibida: " + userRequest);
         try {
@@ -52,7 +52,7 @@ public class UserController {
 
 
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("user/{userId}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long userId) {
         try {
             // Obtener el usuario usando el servicio
@@ -68,7 +68,7 @@ public class UserController {
     }
 
 
-    @PutMapping("/update/{userId}")
+    @PutMapping("update/{userId}")
     public ResponseEntity<UserResponse> updatedUserData(@PathVariable Long userId, @RequestBody UserRequest userRequest) {
         try {
             if (userRequest == null) {
@@ -90,7 +90,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/delete/{userId}")
+    @DeleteMapping("delete/{userId}")
     public ResponseEntity<String> userDelete(@PathVariable Long userId) {
         try {
             userService.userDelete(userId);

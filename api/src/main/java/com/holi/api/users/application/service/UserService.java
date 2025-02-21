@@ -54,33 +54,17 @@ public class UserService {
 
     public UserResponse updateUserData(Long userId, UserRequest userRequest) {
         // Buscar el usuario por ID
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
-
-        // Actualizar los campos del usuario si los valores no son nulos o vacíos
-        if (userRequest.getFullName() != null && !userRequest.getEmail().isEmpty()) {
-            user.setFullName(userRequest.getFullName());
-        }
-        if (userRequest.getEmail() != null && !userRequest.getEmail().isEmpty()) {
-            // Validar si el email ya está en uso por otro usuario
-            Optional<User> existingUser = userRepository.findByEmail(userRequest.getEmail());
-            if (existingUser.isPresent() && !existingUser.get().getUserId().equals(userId)) {
-                throw new IllegalArgumentException("El email ya está en uso por otro usuario.");
-            }
-            user.setEmail(userRequest.getEmail());
-        }
-        if (userRequest.getPhone() != null && !userRequest.getPhone().isEmpty()) {
-            user.setPhone(userRequest.getPhone());
-        }
-        if (userRequest.getPassword() != null && !userRequest.getPassword().isEmpty()) {
-            // Asegúrate de hacer el hashing de la contraseña si no lo has hecho
-            user.setPassword(userRequest.getPassword());  // Considera encriptar la contraseña antes de guardarla
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
+        if (userRequest.getPassword() != null &&  !userRequest.getPassword().isEmpty()){
+            userRequest.setPassword(bcryptPasswordEncoder.encode(userRequest.getPassword()));
         }
 
-        // Guardar el usuario actualizado en la base de datos
+        user.setFullName(userRequest.getFullName());
+        user.setDocument(userRequest.getDocument());
+        user.setPhone(userRequest.getPhone());
+        user.setEmail(userRequest.getEmail());
+        user.setUrlAvatarProfile(userRequest.getUrlAvatarProfile());
         userRepository.save(user);
-
-        // Convertir el objeto User actualizado en un UserResponse y devolverlo
         return userMapper.toResponse(user);
     }
 

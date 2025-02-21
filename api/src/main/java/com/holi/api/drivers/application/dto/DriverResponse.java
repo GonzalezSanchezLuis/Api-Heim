@@ -1,19 +1,43 @@
 package com.holi.api.drivers.application.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+@NoArgsConstructor
 @Data
 public class DriverResponse {
     private Long driverId;
     private String fullName;
     private String email;
     private String password;
-    private int  document;
-    private int  phone;
-    private int  licenseNumber;
-    private String  vehicleType;
+    private String document;
+    private String phone;
+    private String licenseNumber;
+    private String vehicleType;
+    private String enrollVehicle;
+    private String urlAvatarProfile;
     private String role;
     private LocalDateTime createdAt;
     private boolean isActive;
+    private String status;
+
+
+
+    public DriverResponse(
+            Long driverId,
+            String fullName,
+            String email,
+            String phone,
+            String urlAvatarProfile,
+            String document,
+            String licenseNumber,
+            String vehicleType,
+            String enrollVehicle,
+            String role,
+            LocalDateTime createdAt,
+            boolean active,
+            Object o) {
+    }
 }

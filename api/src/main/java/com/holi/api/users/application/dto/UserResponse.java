@@ -1,8 +1,12 @@
 package com.holi.api.users.application.dto;
 
+import com.holi.api.ScheduleMove.application.dto.MovingResponse;
+import com.holi.api.ScheduleMove.domain.entity.ReservationMoving;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,4 +19,30 @@ public class UserResponse {
     private String  document;
     private String role;
     private String createdAt;
+    private boolean active;
+    private List<MovingResponse> reservationMovingList = new ArrayList<>();
+
+
+    public UserResponse(
+            Long userId,
+            String fullName,
+            String email,
+            String role,
+            String phone,
+            String urlAvatarProfile,
+            String document,
+            List<ReservationMoving> reservationMovingList) {
+    }
+
+    public UserResponse(Long userId,
+                        String fullName,
+                        String email,
+                        String phone,
+                        String document,
+                        String urlAvatarProfile,
+                        String role,
+                        String string,
+                        boolean active,
+                        Object o) {
+    }
 }

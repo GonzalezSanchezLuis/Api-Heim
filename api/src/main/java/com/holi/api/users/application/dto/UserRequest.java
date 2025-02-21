@@ -13,6 +13,8 @@ public class UserRequest {
     private String password;
     private String  document;
     private String phone;
+    private String urlAvatarProfile;
+    private boolean active;
     private String role;
 
 }
